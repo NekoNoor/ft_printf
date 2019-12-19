@@ -1,7 +1,5 @@
 *
 !*.c
-!libft/
-!libft/*
 !src/
 !src/*.c
 !include/

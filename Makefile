@@ -6,22 +6,21 @@
 #    By: nschat <nschat@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2019/10/29 17:30:18 by nschat        #+#    #+#                  #
-#    Updated: 2019/12/02 18:24:53 by nschat        ########   odam.nl          #
+#    Updated: 2019/12/19 20:22:12 by nschat        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 AR = ar rcs
-CFLAGS = -L libft -lft -Wall -Wextra -Werror -I includes -I libft
+IDIR = include
+CFLAGS = -L libft -lft -Wall -Wextra -Werror -I $(IDIR)
 
 SRC = ft_printf.c
-#BSRC =
+BSRC =
 
 ODIR = obj
 OBJ = $(addprefix $(ODIR)/,$(SRC:.c=.o))
 BOBJ = $(addprefix $(ODIR)/,$(BSRC:.c=.o))
-
-LIBFT= libft/libft.a
 
 NAME = libftprintf.a
 
@@ -64,18 +63,15 @@ export ASCII
 ascii:
 	@echo "\n$(CYELLOW)$$ASCII$(CDEF)\n"
 
-$(NAME): $(LIB) | $(OBJ)
+$(NAME): $(OBJ)
 	@echo "$(TIME) $(CPLUS) $(CGREEN)Adding objects to $@...$(CDEF)"
-	@$(AR) $@ $|
-
-$(LIB):
-	$(MAKE) -C $(dir $@)
+	@$(AR) $@ $^
 
 bonus: $(NAME) | $(BOBJ)
 	@echo "$(TIME) $(CPLUS) $(CGREEN)Adding bonus objects to $(NAME)...$(CDEF)"
 	@$(AR) $(NAME) $|
 
-%.o: %.c
+%.o: %.c $(IDIR)/%.h
 	@echo "$(TIME) $(CPLUS) $(CBLUE)Compiling $< to $@...$(CDEF)"
 	@mkdir $(ODIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
