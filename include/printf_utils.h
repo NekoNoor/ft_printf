@@ -1,18 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ft_putchar_fd.c                                    :+:    :+:            */
+/*   printf_utils.h                                     :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2019/10/28 18:16:29 by nschat        #+#    #+#                 */
-/*   Updated: 2019/11/17 15:42:13 by nschat        ########   odam.nl         */
+/*   Created: 2019/12/11 19:24:41 by nschat        #+#    #+#                 */
+/*   Updated: 2019/12/12 10:46:49 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
+#ifndef PRINTF_UTILS_H
+# define PRINTF_UTILS_H
+# include "libft.h"
+# include <stdarg.h>
 
-void	ft_putchar_fd(char c, int fd)
-{
-	write(fd, &c, 1);
-}
+size_t	calc_size(const char *format, va_list ap)
+t_list	*parse_format(const char *format, va_list ap);
+
+int		get_parameter(char **format)
+char	get_flags(char **format)
+int		get_width(char **format)
+int		get_precision(char **format)
+char	*get_length(char **format)
+char	get_type(char **format, va_list ap)
+
+#endif

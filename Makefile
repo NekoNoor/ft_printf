@@ -6,16 +6,13 @@
 #    By: nschat <nschat@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2019/10/29 17:30:18 by nschat        #+#    #+#                  #
-#    Updated: 2019/11/18 19:44:25 by nschat        ########   odam.nl          #
+#    Updated: 2019/12/02 18:24:53 by nschat        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 AR = ar rcs
 CFLAGS = -L libft -lft -Wall -Wextra -Werror -I includes -I libft
-ifeq (${DEBUG},true)
-	CFLAGS := -g -fprofile-instr-generate -fcoverage-mapping $(CFLAGS)
-endif
 
 SRC = ft_printf.c
 #BSRC =
