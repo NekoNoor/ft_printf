@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/12/12 12:14:07 by nschat        #+#    #+#                 */
-/*   Updated: 2019/12/19 20:17:31 by nschat        ########   odam.nl         */
+/*   Updated: 2019/12/19 21:08:21 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <unistd.h>
 
 #include <stdio.h>
+
+int		ft_putchar(char c, char flags, int field_width);
 
 size_t	ft_strlen(char *s)
 {
@@ -26,10 +28,29 @@ size_t	ft_strlen(char *s)
 	return (len);
 }
 
-int		ft_putchar(char c)
+int		pad(char c, size_t len)
 {
+	size_t	i;
+
+	i = 0;
+	while (i < len)
+	{
+		i += ft_putchar(c, 0, -1);
+	}
+	return (i);
+}
+
+int		ft_putchar(char c, char flags, int field_width)
+{
+	int	padding;
+
+	padding = 0;
+	if (field_width != -1 && !(flags & 0b01) && 1 < field_width)
+		padding += pad(' ', field_width - 1);
 	write(1, &c, 1);
-	return (1);
+	if (field_width != -1 && (flags & 0b01) && 1 < field_width)
+		padding += pad(' ', field_width - 1);
+	return (1 + padding);
 }
 
 int		ft_putnbr(long nbr, int sign, int upcs, int base)
@@ -37,20 +58,30 @@ int		ft_putnbr(long nbr, int sign, int upcs, int base)
 	static const char	*chars = "0123456789ABCDEF0123456789abcdef";
 
 	if (sign && nbr < 0)
-		return (ft_putchar('-') + ft_putnbr(-nbr, 0, upcs, base));
+		return (ft_putchar('-', 0, -1) + ft_putnbr(-nbr, 0, upcs, base));
 	if ((size_t)nbr >= (size_t)base)
 		return (ft_putnbr((size_t)nbr / base, 0, upcs, base) +
-				ft_putchar(upcs ? chars[(size_t)nbr % base] : chars[(size_t)nbr % base + 16]));
-	return (ft_putchar(upcs ? chars[(size_t)nbr % base] : chars[(size_t)nbr % base + 16]));
+				ft_putchar(upcs ? chars[(size_t)nbr % base] : chars[(size_t)nbr % base + 16], 0, -1));
+	return (ft_putchar(upcs ? chars[(size_t)nbr % base] : chars[(size_t)nbr % base + 16], 0, -1));
 }
 
-int		ft_putstr(char *str)
+int		ft_putstr(char *str, char flags, int field_width, int precision)
 {
+	int	padding;
 	int	len;
 
+	padding = 0;
+	if (str == NULL)
+		str = "(null)";
 	len = ft_strlen(str);
+	if (precision != -1 && len > precision)
+		len = precision;
+	if (field_width != -1 && !(flags & 0b01) && len < field_width)
+		padding += pad(' ', field_width - len);
 	write(1, str, len);
-	return (len);
+	if (field_width != -1 && (flags & 0b01) && len < field_width)
+		padding += pad(' ', field_width - len);
+	return (len + padding);
 }
 
 int		ft_isspace(int c)
@@ -87,7 +118,6 @@ int 	print_things(const char *format, va_list ap)
 	char	*str;
 	size_t	nbr;
 	int		len;
-
 	char	flags;
 	int		field_width;
 	int		precision;
@@ -99,8 +129,8 @@ int 	print_things(const char *format, va_list ap)
 		{
 			format++;
 			flags = 0;
-			field_width = 0;
-			precision = 0;
+			field_width = -1;
+			precision = -1;
 			while (*format == '-' || *format == '0')
 			{
 				if (*format == '-')
@@ -108,7 +138,7 @@ int 	print_things(const char *format, va_list ap)
 				if (*format == '0')
 				{
 					flags |= 0b10;
-					flags &= ~0b10;
+					flags &= ~0b01;
 				}
 				format++;
 			}
@@ -153,19 +183,19 @@ int 	print_things(const char *format, va_list ap)
 			if (*format == 'c')
 			{
 				nbr = va_arg(ap, int);
-				len += ft_putchar(nbr);
+				len += ft_putchar(nbr, flags, field_width);
 				format++;
 			}
 			if (*format == 's')
 			{
 				str = va_arg(ap, char *);
-				len += ft_putstr(str);
+				len += ft_putstr(str, flags, field_width, precision);
 				format++;
 			}
 			if (*format == 'p')
 			{
 				nbr = va_arg(ap, unsigned long);
-				len += ft_putstr("0x");
+				len += ft_putstr("0x", 0, -1, -1);
 				len += ft_putnbr(nbr, 0, 0, 16);
 				format++;
 			}
@@ -189,11 +219,11 @@ int 	print_things(const char *format, va_list ap)
 			}
 			if (*format == '%')
 			{
-				len += ft_putchar('%');
+				len += ft_putchar('%', 0, -1);
 				format++;
 			}
 		}
-		len += ft_putchar(*format);
+		len += ft_putchar(*format, 0, -1);
 		format++;
 	}
 	return (len);
@@ -217,10 +247,10 @@ int		main(void)
 
 	test = malloc(1);
 	printf("ft\n");
-	len = printf_garbage("c %c\ns %*.*s\np %5p\nd %5.*d\ni %*.5i\nu %u\nx %x\nX %X\n%%\n", 0x41, 10, 10, "string", test, 10, 97, 10, -98, 18446744073709551615UL, 0x41ADBEEF, 0x41ADBEEF);
+	len = printf_garbage("c [%5c]\ns [%-*.*s]\np [%5p]\nd [%5.*d]\ni [%*.5i]\nu [%u]\nx [%x]\nX [%X]\n[%%]\n", 0x41, 10, 5, "string", test, 10, 97, 10, -98, 18446744073709551615UL, 0x41ADBEEF, 0x41ADBEEF);
 	printf("len = %d\n", len);
 	printf("bsd\n");
-	len = printf("c %c\ns %*.*s\np %5p\nd %5.*d\ni %*.5i\nu %lu\nx %x\nX %X\n%%\n", 0x41, 10, 10, "string", test, 10, 97, 10, -98, 18446744073709551615UL, 0x41ADBEEF, 0x41ADBEEF);
+	len = printf("c [%5c]\ns [%-*.*s]\np [%5p]\nd [%5.*d]\ni [%*.5i]\nu [%lu]\nx [%x]\nX [%X]\n[%%]\n", 0x41, 10, 5, "string", test, 10, 97, 10, -98, 18446744073709551615UL, 0x41ADBEEF, 0x41ADBEEF);
 	printf("len = %d\n", len);
 	return (0);
 }
