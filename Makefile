@@ -6,38 +6,25 @@
 #    By: nschat <nschat@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2019/10/29 17:30:18 by nschat        #+#    #+#                  #
-#    Updated: 2019/12/19 20:22:12 by nschat        ########   odam.nl          #
+#    Updated: 2020/01/27 18:38:02 by nschat        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 AR = ar rcs
 IDIR = include
-CFLAGS = -L libft -lft -Wall -Wextra -Werror -I $(IDIR)
+CFLAGS = -Wall -Wextra -Werror -I $(IDIR)
 
-SRC = ft_printf.c
-BSRC =
+SRC = printf_mediocre.c \
+	  printf_mediocre_analyze.c \
+	  printf_mediocre_list.c \
+	  printf_mediocre_print.c \
+	  printf_mediocre_utils.c
 
 ODIR = obj
 OBJ = $(addprefix $(ODIR)/,$(SRC:.c=.o))
-BOBJ = $(addprefix $(ODIR)/,$(BSRC:.c=.o))
 
 NAME = libftprintf.a
-
-define ASCII
-   ___  __                                       __       ___
- /'___\\/\\ \\__                         __        /\\ \\__  /'___\\
-/\\ \\__/\\ \\ ,_\\          _____   _ __ /\\_\\    ___\\ \\ ,_\\/\\ \\__/
-\\ \\ ,__\\\\ \\ \\/         /\\ '__`\\/\\`'__\\/\\ \\ /' _ `\\ \\ \\/\\ \\\
- ,__\\
- \\ \\ \\_/ \\ \\ \\_        \\ \\ \\L\\ \\ \\ \\/ \\ \\ \\/\\ \\/\\ \\ \\\
- \\_\\ \\ \\_/
-  \\ \\_\\   \\ \\__\\        \\ \\ ,__/\\ \\_\\  \\ \\_\\ \\_\\ \\_\\\
- \\__\\\\ \\_\\
-   \\/_/    \\/__/  _______\\ \\ \\/  \\/_/   \\/_/\\/_/\\/_/\\/__/ \\/_/
-                 /\\______\\\\ \\_\\
-                 \\/______/ \\/_/
-endef
 
 CRED = \x1b[31m
 CGREEN = \x1b[32m
@@ -57,28 +44,20 @@ vpath %.c src
 
 .PHONY: clean fclean
 
-all: ascii $(NAME)
-
-export ASCII
-ascii:
-	@echo "\n$(CYELLOW)$$ASCII$(CDEF)\n"
+all: $(NAME)
 
 $(NAME): $(OBJ)
 	@echo "$(TIME) $(CPLUS) $(CGREEN)Adding objects to $@...$(CDEF)"
 	@$(AR) $@ $^
 
-bonus: $(NAME) | $(BOBJ)
-	@echo "$(TIME) $(CPLUS) $(CGREEN)Adding bonus objects to $(NAME)...$(CDEF)"
-	@$(AR) $(NAME) $|
-
-%.o: %.c $(IDIR)/%.h
+$(ODIR)/%.o: %.c $(IDIR)/printf_mediocre.h
 	@echo "$(TIME) $(CPLUS) $(CBLUE)Compiling $< to $@...$(CDEF)"
-	@mkdir $(ODIR)
+	@mkdir -p $(ODIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	@echo "$(TIME) $(CMINUS) $(CRED)Cleaning object directory...$(CDEF)"
-	@$(RM) $(ODIR)
+	@$(RM) -r $(ODIR)
 
 fclean: clean
 	@echo "$(TIME) $(CMINUS) $(CRED)Cleaning $(NAME)...$(CDEF)"

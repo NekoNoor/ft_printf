@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:46:00 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/22 13:47:27 by nschat        ########   odam.nl         */
+/*   Updated: 2020/01/27 18:09:15 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 t_flags	get_flags(const char **format)
 {
-	const char	*stop = "cspdiuxX%123456789";
 	t_flags		flags;
 
 	flags.minus = 0;
@@ -25,7 +24,7 @@ t_flags	get_flags(const char **format)
 			flags.minus = 1;
 		if (**format == '0')
 			flags.zero = 1;
-		if (ft_strchr(stop, **format) != NULL)
+		if (**format != '-' && **format != '0')
 			break ;
 		(*format)++;
 	}
@@ -36,17 +35,70 @@ t_flags	get_flags(const char **format)
 
 int		get_width(const char **format, va_list ap, t_data *data)
 {
+	int	field_width;
 
+	field_width = -1;
+	if (ft_isdigit(**format) || **format == '*')
+	{
+		if (**format == '*')
+		{
+			field_width = va_arg(ap, int);
+			if (field_width < 0)
+			{
+				if (data->flags.zero == 0)
+					data->flags.minus = 1;
+				field_width *= -1;
+			}
+			(*format)++;
+		}
+		else
+		{
+			field_width = ft_atoi((char *)*format);
+			while (ft_isdigit(**format))
+				(*format)++;
+		}
+	}
+	return (field_width);
 }
 
 int		get_precision(const char **format, va_list ap)
 {
+	int precision;
 
+	precision = -1;
+	if (**format == '.')
+	{
+		(*format)++;
+		if (**format == '*')
+		{
+			precision = va_arg(ap, int);
+			(*format)++;
+		}
+		else
+		{
+			precision = ft_atoi((char *)*format);
+			while (ft_isdigit(**format))
+				(*format)++;
+		}
+	}
+	return (precision);
 }
 
-char	get_type(const char **format)
+void	get_arg(const char **format, va_list ap, t_data *data)
 {
-
+	(*format)++;
+	if (data->type == 'c')
+		data->arg.c = va_arg(ap, int);
+	if (data->type == 's')
+		data->arg.s = va_arg(ap, char *);
+	if (data->type == 'p')
+		data->arg.p = va_arg(ap, void *);
+	if (data->type == 'd' || data->type == 'i')
+		data->arg.i = va_arg(ap, int);
+	if (data->type == 'u' || data->type == 'x' || data->type == 'X')
+		data->arg.ui = va_arg(ap, unsigned int);
+	if (data->type == '%')
+		data->arg.c = '%';
 }
 
 t_list	*analyze_format(const char *format, va_list ap)
@@ -62,14 +114,15 @@ t_list	*analyze_format(const char *format, va_list ap)
 			format++;
 			data = (t_data *)malloc(sizeof(t_data));
 			if (data == NULL)
-			
+			{
 				free_list(&list);
 				return (NULL);
 			}
 			data->flags = get_flags(&format);
 			data->width = get_width(&format, ap, data);
 			data->precision = get_precision(&format, ap);
-			data->type = get_type(&format);
+			data->type = *format;
+			get_arg(&format, ap, data);
 			ft_lstadd_back(&list, ft_lstnew(data));
 		}
 		format++;

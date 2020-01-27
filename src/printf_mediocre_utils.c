@@ -1,46 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   printf_mediocre.c                                  :+:    :+:            */
+/*   printf_mediocre_utils.c                            :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/01/19 15:30:31 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/22 13:47:28 by nschat        ########   odam.nl         */
+/*   Created: 2020/01/24 17:10:08 by nschat        #+#    #+#                 */
+/*   Updated: 2020/01/27 15:08:05 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf_mediocre.h"
 
-char	*ft_strchr(const char *s, int c)
+int	ft_atoi(char *str)
 {
-	while (*s)
+	unsigned	out;
+	int			sign;
+
+	while (ft_isspace(*str))
+		str++;
+	sign = (*str == '-') ? -1 : 1;
+	str += (*str == '-' || *str == '+');
+	out = 0;
+	while (ft_isdigit(*str))
 	{
-		if (*s == (char)c)
-			break ;
-		s++;
+		out = out * 10 + (*str - '0');
+		str++;
 	}
-	if (*s == (char)c)
-		return ((char *)s);
-	return (NULL);
+	return (out * sign);
 }
 
-int		print_list(t_list *list)
+int ft_isspace(int c)
 {
-	int	len;
-
-
+	return ((c >= 9 && c <= 13) || c == 32);
 }
 
-int		ft_printf(const char *format, ...)
+int	ft_isdigit(int c)
 {
-	t_list	*list;
-	va_list	ap;
-	int		len;
-
-	va_start(ap, format);
-	list = analyze_format(format, ap);
-	len = print_list(list);
-	va_end(ap);
-	return (len);
+	return (c >= '0' && c <= '9');
 }

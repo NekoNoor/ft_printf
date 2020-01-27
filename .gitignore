@@ -1,5 +1,4 @@
 *
-!*.c
 !src/
 !src/*.c
 !include/
