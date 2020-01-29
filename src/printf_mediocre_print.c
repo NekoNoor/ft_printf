@@ -6,34 +6,81 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:58:16 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/27 18:27:10 by nschat        ########   odam.nl         */
+/*   Updated: 2020/01/29 18:23:05 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf_mediocre.h"
-#include <stdio.h> //
+#include <unistd.h>
 
-int	print_list(t_list *list)
+static int	print_char(t_data *data)
 {
-	/*
-	 *int					len;
-	 *const t_dispatch	dispatch_table[10] = {
-	 *    {'c', &print_char},
-	 *    {'s', &print_string},
-	 *    {'p', &print_number},
-	 *    {'d', &print_number},
-	 *    {'i', &print_number},
-	 *    {'u', &print_number},
-	 *    {'x', &print_number},
-	 *    {'X', &print_number},
-	 *    {'%', &print_char}
-	 *};
-	 */
-	printf("list->data->flags.minus: %i\n", list->data->flags.minus);
-	printf("list->data->flags.zero: %i\n", list->data->flags.zero);
-	printf("list->data->precision: %i\n", list->data->precision);
-	printf("list->data->width: %i\n", list->data->width);
-	printf("list->data->type: %c\n", list->data->type);
-	printf("list->data->arg: %s\n", list->data->arg.s);
-	return (0);
+	int	padding;
+	int	len;
+
+	padding = 0;
+	len = 1;
+	if (data->flags.minus == 0 && len < data->width)
+		padding += pad(' ', data->width - len);
+	write(1, &data->arg.c, len);
+	if (data->flags.minus == 1 && len < data->width)
+		padding += pad(' ', data->width - len);
+	return (len + padding);
+}
+
+static int	print_string(t_data *data)
+{
+	int	padding;
+	int	len;
+
+	padding = 0;
+	if (data->arg.s == NULL)
+		data->arg.s = "(null)";
+	len = ft_strlen(data->arg.s);
+	if (data->precision != -1 && len > data->precision)
+		len = data->precision;
+	if (data->flags.minus == 0 && len < data->width)
+		padding += pad(' ', data->width - len);
+	write(1, data->arg.s, len);
+	if (data->flags.minus == 1 && len < data->width)
+		padding += pad(' ', data->width - len);
+	return (len + padding);
+}
+
+static int	select_func(t_data *data)
+{
+	const t_dispatch	dispatch_table[9] = {
+		{'c', &print_char},
+		{'s', &print_string},
+		{'p', &print_number},
+		{'d', &print_number},
+		{'i', &print_number},
+		{'u', &print_number},
+		{'x', &print_number},
+		{'X', &print_number},
+		{'%', &print_char}
+	};
+	size_t				i;
+
+	i = 0;
+	while (i < sizeof(dispatch_table) / sizeof(t_dispatch))
+	{
+		if (data->type == dispatch_table[i].type)
+			return ((*dispatch_table[i].print)(data));
+		i++;
+	}
+	return (-1);
+}
+
+int			print_list(t_list *list)
+{
+	int					len;
+
+	len = 0;
+	while (list)
+	{
+		len += select_func(list->data);
+		list = list->next;
+	}
+	return (len);
 }

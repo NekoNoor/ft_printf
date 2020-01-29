@@ -6,102 +6,46 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:46:00 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/27 18:09:15 by nschat        ########   odam.nl         */
+/*   Updated: 2020/01/29 16:39:52 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf_mediocre.h"
 
-t_flags	get_flags(const char **format)
+static size_t	to_next(const char *format)
 {
-	t_flags		flags;
+	size_t	len;
 
-	flags.minus = 0;
-	flags.zero = 0;
-	while (**format)
-	{
-		if (**format == '-')
-			flags.minus = 1;
-		if (**format == '0')
-			flags.zero = 1;
-		if (**format != '-' && **format != '0')
-			break ;
-		(*format)++;
-	}
-	if (flags.minus && flags.zero)
-		flags.zero = 0;
-	return (flags);
+	len = 0;
+	while (format[len] && format[len] != '%')
+		len++;
+	return (len);
 }
 
-int		get_width(const char **format, va_list ap, t_data *data)
+static void		make_string(const char **format, t_data *data)
 {
-	int	field_width;
+	size_t	skip_len;
 
-	field_width = -1;
-	if (ft_isdigit(**format) || **format == '*')
-	{
-		if (**format == '*')
-		{
-			field_width = va_arg(ap, int);
-			if (field_width < 0)
-			{
-				if (data->flags.zero == 0)
-					data->flags.minus = 1;
-				field_width *= -1;
-			}
-			(*format)++;
-		}
-		else
-		{
-			field_width = ft_atoi((char *)*format);
-			while (ft_isdigit(**format))
-				(*format)++;
-		}
-	}
-	return (field_width);
+	data->flags = (t_flags){0, 0};
+	data->width = -1;
+	data->precision = -1;
+	data->type = 's';
+	skip_len = to_next(*format);
+	data->arg.s = ft_substr(*format, 0, skip_len);
+	*format += skip_len;
 }
 
-int		get_precision(const char **format, va_list ap)
-{
-	int precision;
-
-	precision = -1;
-	if (**format == '.')
-	{
-		(*format)++;
-		if (**format == '*')
-		{
-			precision = va_arg(ap, int);
-			(*format)++;
-		}
-		else
-		{
-			precision = ft_atoi((char *)*format);
-			while (ft_isdigit(**format))
-				(*format)++;
-		}
-	}
-	return (precision);
-}
-
-void	get_arg(const char **format, va_list ap, t_data *data)
+static void		fill_data(const char **format, va_list ap, t_data *data)
 {
 	(*format)++;
-	if (data->type == 'c')
-		data->arg.c = va_arg(ap, int);
-	if (data->type == 's')
-		data->arg.s = va_arg(ap, char *);
-	if (data->type == 'p')
-		data->arg.p = va_arg(ap, void *);
-	if (data->type == 'd' || data->type == 'i')
-		data->arg.i = va_arg(ap, int);
-	if (data->type == 'u' || data->type == 'x' || data->type == 'X')
-		data->arg.ui = va_arg(ap, unsigned int);
-	if (data->type == '%')
-		data->arg.c = '%';
+	data->flags = get_flags(format);
+	data->width = get_width(format, ap, data);
+	data->precision = get_precision(format, ap);
+	data->type = **format;
+	get_arg(format, ap, data);
 }
 
-t_list	*analyze_format(const char *format, va_list ap)
+t_list			*analyze_format(const char *format, va_list ap)
 {
 	t_list	*list;
 	t_data	*data;
@@ -109,23 +53,17 @@ t_list	*analyze_format(const char *format, va_list ap)
 	list = NULL;
 	while (*format)
 	{
-		if (*format == '%')
+		data = (t_data *)malloc(sizeof(t_data));
+		if (data == NULL)
 		{
-			format++;
-			data = (t_data *)malloc(sizeof(t_data));
-			if (data == NULL)
-			{
-				free_list(&list);
-				return (NULL);
-			}
-			data->flags = get_flags(&format);
-			data->width = get_width(&format, ap, data);
-			data->precision = get_precision(&format, ap);
-			data->type = *format;
-			get_arg(&format, ap, data);
-			ft_lstadd_back(&list, ft_lstnew(data));
+			free_list(&list);
+			return (NULL);
 		}
-		format++;
+		if (*format == '%')
+			fill_data(&format, ap, data);
+		else
+			make_string(&format, data);
+		ft_lstadd_back(&list, ft_lstnew(data));
 	}
 	return (list);
 }

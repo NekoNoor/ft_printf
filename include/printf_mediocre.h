@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/21 19:17:31 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/27 18:27:21 by nschat        ########   odam.nl         */
+/*   Updated: 2020/01/29 18:22:56 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef union	u_arg
 	char			*s;
 	int				i;
 	unsigned int	ui;
+	unsigned long	ul;
 	void			*p;
 }				t_arg;
 
@@ -53,21 +54,31 @@ typedef struct	s_dispatch
 
 int				ft_printf(const char *format, ...);
 
+t_list			*analyze_format(const char *format, va_list ap);
+
 t_flags			get_flags(const char **format);
 int				get_width(const char **format, va_list ap, t_data *data);
 int				get_precision(const char **format, va_list ap);
 void			get_arg(const char **format, va_list ap, t_data *data);
-t_list			*analyze_format(const char *format, va_list ap);
 
 t_list			*ft_lstnew(t_data *data);
 t_list			*ft_lstlast(t_list *lst);
 void			ft_lstadd_back(t_list **alst, t_list *new);
 void			free_list(t_list **alst);
 
+int				pad(char c, size_t len);
+
+int				print_number(t_data *data);
+
 int				print_list(t_list *list);
 
-int				ft_atoi(char *str);
+size_t			ft_strlen(const char *s);
+void			*ft_memcpy(void *dst, const void *src, size_t n);
+char			*ft_substr(char const *s, unsigned int start, size_t len);
+
 int				ft_isspace(int c);
 int				ft_isdigit(int c);
+int				ft_atoi(char *str);
+void			ft_putnbr(unsigned long nbr, unsigned long base, int offs);
 
 #endif

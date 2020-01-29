@@ -6,13 +6,24 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 17:10:08 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/27 15:08:05 by nschat        ########   odam.nl         */
+/*   Updated: 2020/01/29 19:02:09 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf_mediocre.h"
+#include <unistd.h>
 
-int	ft_atoi(char *str)
+int		ft_isspace(int c)
+{
+	return ((c >= 9 && c <= 13) || c == 32);
+}
+
+int		ft_isdigit(int c)
+{
+	return (c >= '0' && c <= '9');
+}
+
+int		ft_atoi(char *str)
 {
 	unsigned	out;
 	int			sign;
@@ -30,12 +41,24 @@ int	ft_atoi(char *str)
 	return (out * sign);
 }
 
-int ft_isspace(int c)
+void	ft_putnbr(unsigned long nbr, unsigned long base, int offs)
 {
-	return ((c >= 9 && c <= 13) || c == 32);
+	const char	*chars = "0123456789ABCDEF0123456789abcdef";
+
+	if (nbr >= base)
+		ft_putnbr(nbr / base, base, offs);
+	write(1, chars + (nbr % base) + offs, 1);
 }
 
-int	ft_isdigit(int c)
+int		pad(char c, size_t len)
 {
-	return (c >= '0' && c <= '9');
+	size_t	i;
+
+	i = 0;
+	while (i < len)
+	{
+		write(1, &c, 1);
+		i++;
+	}
+	return (len);
 }

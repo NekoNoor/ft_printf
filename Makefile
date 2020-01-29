@@ -6,7 +6,7 @@
 #    By: nschat <nschat@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2019/10/29 17:30:18 by nschat        #+#    #+#                  #
-#    Updated: 2020/01/27 18:38:02 by nschat        ########   odam.nl          #
+#    Updated: 2020/01/29 19:02:40 by nschat        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,9 +17,13 @@ CFLAGS = -Wall -Wextra -Werror -I $(IDIR)
 
 SRC = printf_mediocre.c \
 	  printf_mediocre_analyze.c \
+	  printf_mediocre_get.c \
 	  printf_mediocre_list.c \
+	  printf_mediocre_nbr.c \
 	  printf_mediocre_print.c \
+	  printf_mediocre_str.c \
 	  printf_mediocre_utils.c
+HDR = $(IDIR)/printf_mediocre.h
 
 ODIR = obj
 OBJ = $(addprefix $(ODIR)/,$(SRC:.c=.o))
@@ -50,7 +54,7 @@ $(NAME): $(OBJ)
 	@echo "$(TIME) $(CPLUS) $(CGREEN)Adding objects to $@...$(CDEF)"
 	@$(AR) $@ $^
 
-$(ODIR)/%.o: %.c $(IDIR)/printf_mediocre.h
+$(ODIR)/%.o: %.c $(HDR)
 	@echo "$(TIME) $(CPLUS) $(CBLUE)Compiling $< to $@...$(CDEF)"
 	@mkdir -p $(ODIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
