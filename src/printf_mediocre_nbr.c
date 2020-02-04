@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 18:21:07 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/29 18:51:34 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/04 15:34:17 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ static void	number_value(t_data *data)
 	if (data->type == 'u')
 		ft_putnbr(data->arg.ui, 10, 0);
 	if (data->type == 'x')
-		ft_putnbr(data->arg.ui, 16, 0);
-	if (data->type == 'X')
 		ft_putnbr(data->arg.ui, 16, 16);
+	if (data->type == 'X')
+		ft_putnbr(data->arg.ui, 16, 0);
 }
 
 int			print_number(t_data *data)
