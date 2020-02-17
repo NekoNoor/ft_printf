@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/21 19:22:20 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/21 19:32:55 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/14 13:15:12 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ void	free_list(t_list **alst)
 	while (node)
 	{
 		next = node->next;
+		if (node->data->type == 't')
+			free(node->data->arg.s);
 		free(node->data);
 		free(node);
 		node = next;

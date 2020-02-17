@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:46:00 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/29 16:39:52 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/17 17:57:09 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void		make_string(const char **format, t_data *data)
 	data->flags = (t_flags){0, 0};
 	data->width = -1;
 	data->precision = -1;
-	data->type = 's';
+	data->type = 't';
 	skip_len = to_next(*format);
 	data->arg.s = ft_substr(*format, 0, skip_len);
 	*format += skip_len;
@@ -41,6 +41,10 @@ static void		fill_data(const char **format, va_list ap, t_data *data)
 	data->flags = get_flags(format);
 	data->width = get_width(format, ap, data);
 	data->precision = get_precision(format, ap);
+	if (data->flags.minus && data->flags.zero)
+		data->flags.zero = 0;
+	if (data->precision != -1 && data->flags.zero == 1)
+		data->flags.zero = 0;
 	data->type = **format;
 	get_arg(format, ap, data);
 }

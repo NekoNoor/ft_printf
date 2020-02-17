@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:58:16 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/29 18:23:05 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/17 16:59:34 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	print_string(t_data *data)
 
 static int	select_func(t_data *data)
 {
-	const t_dispatch	dispatch_table[9] = {
+	const t_dispatch	dispatch_table[10] = {
 		{'c', &print_char},
 		{'s', &print_string},
 		{'p', &print_number},
@@ -58,7 +58,8 @@ static int	select_func(t_data *data)
 		{'u', &print_number},
 		{'x', &print_number},
 		{'X', &print_number},
-		{'%', &print_char}
+		{'%', &print_char},
+		{'t', &print_string}
 	};
 	size_t				i;
 
@@ -69,7 +70,7 @@ static int	select_func(t_data *data)
 			return ((*dispatch_table[i].print)(data));
 		i++;
 	}
-	return (-1);
+	return (0);
 }
 
 int			print_list(t_list *list)

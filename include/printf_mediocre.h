@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/21 19:17:31 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/29 18:22:56 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/17 15:51:51 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct	s_dispatch
 	int		(*print)(t_data *);
 }				t_dispatch;
 
+int				ft_vprintf(const char *format, va_list ap);
 int				ft_printf(const char *format, ...);
 
 t_list			*analyze_format(const char *format, va_list ap);

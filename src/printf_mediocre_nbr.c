@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 18:21:07 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/04 15:34:17 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/17 18:02:12 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,11 @@ static int	nbrlen(t_data *data)
 		base = 10;
 	if (data->type == 'd' || data->type == 'i')
 		nbr = data->arg.i < 0 ? -(long)data->arg.i : data->arg.i;
-	else
+	if (data->type == 'u' || data->type == 'x' || data->type == 'X')
+		nbr = data->arg.ui;
+	if (data->type == 'p')
 		nbr = data->arg.ul;
-	len = 1;
+	len = !(data->precision == 0 && data->arg.i == 0);
 	while (nbr / base)
 	{
 		len++;
@@ -81,12 +83,17 @@ int			print_number(t_data *data)
 	padding = 0;
 	nbr_len = nbrlen(data);
 	extra_len = extralen(data, nbr_len);
-	if (data->flags.minus == 0 && nbr_len + extra_len < data->width)
+	if (data->flags.minus == 0 && data->flags.zero == 0
+			&& nbr_len + extra_len < data->width)
 		padding += pad(' ', data->width - (nbr_len + extra_len));
 	number_prefix(data);
+	if (data->flags.minus == 0 && data->flags.zero == 1
+			&& nbr_len + extra_len < data->width)
+		padding += pad('0', data->width - (nbr_len + extra_len));
 	if (nbr_len < data->precision)
 		pad('0', data->precision - nbr_len);
-	number_value(data);
+	if (!(data->precision == 0 && data->arg.i == 0))
+		number_value(data);
 	if (data->flags.minus == 1 && nbr_len + extra_len < data->width)
 		padding += pad(' ', data->width - (nbr_len + extra_len));
 	return (extra_len + nbr_len + padding);

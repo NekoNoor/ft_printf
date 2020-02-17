@@ -3,5 +3,6 @@
 !src/*.c
 !include/
 !include/*.h
+!test.c
 !Makefile
 !.gitignore

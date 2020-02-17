@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 16:39:12 by nschat        #+#    #+#                 */
-/*   Updated: 2020/01/29 16:42:32 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/17 17:56:34 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ t_flags	get_flags(const char **format)
 			break ;
 		(*format)++;
 	}
-	if (flags.minus && flags.zero)
-		flags.zero = 0;
 	return (flags);
 }
 

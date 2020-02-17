@@ -6,7 +6,7 @@
 #    By: nschat <nschat@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2019/10/29 17:30:18 by nschat        #+#    #+#                  #
-#    Updated: 2020/01/29 19:02:40 by nschat        ########   odam.nl          #
+#    Updated: 2020/02/17 18:03:52 by nschat        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ AR = ar rcs
 IDIR = include
 CFLAGS = -Wall -Wextra -Werror -I $(IDIR)
 
+HDR = $(IDIR)/printf_mediocre.h
 SRC = printf_mediocre.c \
 	  printf_mediocre_analyze.c \
 	  printf_mediocre_get.c \
@@ -23,12 +24,14 @@ SRC = printf_mediocre.c \
 	  printf_mediocre_print.c \
 	  printf_mediocre_str.c \
 	  printf_mediocre_utils.c
-HDR = $(IDIR)/printf_mediocre.h
+TEST_SRC = test.c
 
 ODIR = obj
 OBJ = $(addprefix $(ODIR)/,$(SRC:.c=.o))
+TEST_OBJ = $(addprefix $(ODIR)/,$(TEST_SRC:.c=.o))
 
 NAME = libftprintf.a
+TEST_NAME = test
 
 CRED = \x1b[31m
 CGREEN = \x1b[32m
@@ -59,12 +62,20 @@ $(ODIR)/%.o: %.c $(HDR)
 	@mkdir -p $(ODIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
+$(TEST_NAME): $(NAME) | $(TEST_OBJ)
+	@echo "$(TIME) $(CPLUS) $(CGREEN)Linking objects into $@...$(CDEF)"
+	@$(CC) $(CFLAGS) -L . -lftprintf $| -o $@
+
+run_test: $(TEST_NAME)
+	@echo "$(TIME) $(CNORM) $(CYELLOW)Running $<...$(CDEF)"
+	@./$<
+
 clean:
 	@echo "$(TIME) $(CMINUS) $(CRED)Cleaning object directory...$(CDEF)"
 	@$(RM) -r $(ODIR)
 
 fclean: clean
-	@echo "$(TIME) $(CMINUS) $(CRED)Cleaning $(NAME)...$(CDEF)"
-	@$(RM) $(NAME)
+	@echo "$(TIME) $(CMINUS) $(CRED)Cleaning $(NAME) and $(TEST_NAME)...$(CDEF)"
+	@$(RM) $(NAME) $(TEST_NAME)
 
 re: fclean all
