@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 16:39:12 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/17 17:56:34 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/19 15:52:26 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ int		get_width(const char **format, va_list ap, t_data *data)
 			field_width = va_arg(ap, int);
 			if (field_width < 0)
 			{
-				if (data->flags.zero == 0)
-					data->flags.minus = 1;
+				data->flags.minus = 1;
+				data->flags.zero = 0;
 				field_width *= -1;
 			}
 			(*format)++;
@@ -69,6 +69,8 @@ int		get_precision(const char **format, va_list ap)
 		if (**format == '*')
 		{
 			precision = va_arg(ap, int);
+			if (precision < 0)
+				precision = -1;
 			(*format)++;
 		}
 		else

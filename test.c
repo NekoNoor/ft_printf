@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/17 18:06:31 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/17 18:06:34 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/21 12:10:57 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,13 @@ int		main(void)
 	pf_test("[%7u]", 33);
 	pf_test("%3u", 75);
 	pf_test("c%7u", 33);
+	pf_test("%-*.*s", -7, -3, "yolo");
+	pf_test("%0*i", -7, -54);
+	pf_test("%");
+	pf_test("%5");
+	pf_test("%05");
+	pf_test("%-05");
+	pf_test("%-5");
+	pf_test("");
 	return (0);
 }

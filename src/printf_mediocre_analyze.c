@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:46:00 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/17 17:57:09 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/21 12:01:37 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ static void		fill_data(const char **format, va_list ap, t_data *data)
 	if (data->precision != -1 && data->flags.zero == 1)
 		data->flags.zero = 0;
 	data->type = **format;
+	if (**format == '\0')
+		return ;
 	get_arg(format, ap, data);
 }
 
