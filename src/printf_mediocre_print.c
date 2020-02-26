@@ -6,14 +6,14 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:58:16 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/17 16:59:34 by nschat        ########   odam.nl         */
+/*   Updated: 2020/02/26 14:03:30 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf_mediocre.h"
 #include <unistd.h>
 
-static int	print_char(t_data *data)
+static int			print_char(t_data *data)
 {
 	int	padding;
 	int	len;
@@ -28,7 +28,7 @@ static int	print_char(t_data *data)
 	return (len + padding);
 }
 
-static int	print_string(t_data *data)
+static int			print_string(t_data *data)
 {
 	int	padding;
 	int	len;
@@ -47,9 +47,7 @@ static int	print_string(t_data *data)
 	return (len + padding);
 }
 
-static int	select_func(t_data *data)
-{
-	const t_dispatch	dispatch_table[10] = {
+const t_dispatch	g_dispatch_table[10] = {
 		{'c', &print_char},
 		{'s', &print_string},
 		{'p', &print_number},
@@ -60,14 +58,17 @@ static int	select_func(t_data *data)
 		{'X', &print_number},
 		{'%', &print_char},
 		{'t', &print_string}
-	};
+};
+
+static int			select_func(t_data *data)
+{
 	size_t				i;
 
 	i = 0;
-	while (i < sizeof(dispatch_table) / sizeof(t_dispatch))
+	while (i < sizeof(g_dispatch_table) / sizeof(t_dispatch))
 	{
-		if (data->type == dispatch_table[i].type)
-			return ((*dispatch_table[i].print)(data));
+		if (data->type == g_dispatch_table[i].type)
+			return ((*g_dispatch_table[i].print)(data));
 		i++;
 	}
 	return (0);
