@@ -6,17 +6,17 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/21 19:22:20 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/14 13:15:12 by nschat        ########   odam.nl         */
+/*   Updated: 2020/10/19 14:09:19 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf_mediocre.h"
 
-t_list	*ft_lstnew(t_data *data)
+t_pflist	*ft_pflstnew(t_data *data)
 {
-	t_list	*new;
+	t_pflist	*new;
 
-	new = (t_list *)malloc(sizeof(t_list));
+	new = (t_pflist *)malloc(sizeof(t_pflist));
 	if (new == NULL)
 		return (NULL);
 	new->data = data;
@@ -24,7 +24,7 @@ t_list	*ft_lstnew(t_data *data)
 	return (new);
 }
 
-t_list	*ft_lstlast(t_list *lst)
+t_pflist	*ft_pflstlast(t_pflist *lst)
 {
 	if (lst == NULL)
 		return (NULL);
@@ -33,18 +33,18 @@ t_list	*ft_lstlast(t_list *lst)
 	return (lst);
 }
 
-void	ft_lstadd_back(t_list **alst, t_list *new)
+void	ft_pflstadd_back(t_pflist **alst, t_pflist *new)
 {
 	if (*alst)
-		ft_lstlast(*alst)->next = new;
+		ft_pflstlast(*alst)->next = new;
 	else
 		*alst = new;
 }
 
-void	free_list(t_list **alst)
+void	free_list(t_pflist **alst)
 {
-	t_list	*node;
-	t_list	*next;
+	t_pflist	*node;
+	t_pflist	*next;
 
 	node = *alst;
 	while (node)

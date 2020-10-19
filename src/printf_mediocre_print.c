@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:58:16 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/26 14:03:30 by nschat        ########   odam.nl         */
+/*   Updated: 2020/10/19 14:06:42 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ static int			print_char(t_data *data)
 	padding = 0;
 	len = 1;
 	if (data->flags.minus == 0 && len < data->width)
-		padding += pad(' ', data->width - len);
-	write(1, &data->arg.c, len);
+		padding += pad(data->fd, ' ', data->width - len);
+	write(data->fd, &data->arg.c, len);
 	if (data->flags.minus == 1 && len < data->width)
-		padding += pad(' ', data->width - len);
+		padding += pad(data->fd, ' ', data->width - len);
 	return (len + padding);
 }
 
@@ -40,10 +40,10 @@ static int			print_string(t_data *data)
 	if (data->precision != -1 && len > data->precision)
 		len = data->precision;
 	if (data->flags.minus == 0 && len < data->width)
-		padding += pad(' ', data->width - len);
-	write(1, data->arg.s, len);
+		padding += pad(data->fd, ' ', data->width - len);
+	write(data->fd, data->arg.s, len);
 	if (data->flags.minus == 1 && len < data->width)
-		padding += pad(' ', data->width - len);
+		padding += pad(data->fd, ' ', data->width - len);
 	return (len + padding);
 }
 
@@ -74,7 +74,7 @@ static int			select_func(t_data *data)
 	return (0);
 }
 
-int			print_list(t_list *list)
+int			print_list(t_pflist *list)
 {
 	int					len;
 

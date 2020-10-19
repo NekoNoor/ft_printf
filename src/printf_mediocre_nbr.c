@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 18:21:07 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/17 18:02:12 by nschat        ########   odam.nl         */
+/*   Updated: 2020/10/19 13:57:18 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,23 +55,23 @@ static int	extralen(t_data *data, int nbr_len)
 static void	number_prefix(t_data *data)
 {
 	if ((data->type == 'd' || data->type == 'i') && data->arg.i < 0)
-		write(1, "-", 1);
+		write(data->fd, "-", 1);
 	if (data->type == 'p')
-		write(1, "0x", 2);
+		write(data->fd, "0x", 2);
 }
 
 static void	number_value(t_data *data)
 {
 	if (data->type == 'p')
-		ft_putnbr(data->arg.ul, 16, 16);
+		ft_putnbr(data->fd, data->arg.ul, 16, 16);
 	if (data->type == 'd' || data->type == 'i')
-		ft_putnbr(data->arg.i < 0 ? -(long)data->arg.i : data->arg.i, 10, 0);
+		ft_putnbr(data->fd, data->arg.i < 0 ? -(long)data->arg.i : data->arg.i, 10, 0);
 	if (data->type == 'u')
-		ft_putnbr(data->arg.ui, 10, 0);
+		ft_putnbr(data->fd, data->arg.ui, 10, 0);
 	if (data->type == 'x')
-		ft_putnbr(data->arg.ui, 16, 16);
+		ft_putnbr(data->fd, data->arg.ui, 16, 16);
 	if (data->type == 'X')
-		ft_putnbr(data->arg.ui, 16, 0);
+		ft_putnbr(data->fd, data->arg.ui, 16, 0);
 }
 
 int			print_number(t_data *data)
@@ -85,16 +85,16 @@ int			print_number(t_data *data)
 	extra_len = extralen(data, nbr_len);
 	if (data->flags.minus == 0 && data->flags.zero == 0
 			&& nbr_len + extra_len < data->width)
-		padding += pad(' ', data->width - (nbr_len + extra_len));
+		padding += pad(data->fd, ' ', data->width - (nbr_len + extra_len));
 	number_prefix(data);
 	if (data->flags.minus == 0 && data->flags.zero == 1
 			&& nbr_len + extra_len < data->width)
-		padding += pad('0', data->width - (nbr_len + extra_len));
+		padding += pad(data->fd, '0', data->width - (nbr_len + extra_len));
 	if (nbr_len < data->precision)
-		pad('0', data->precision - nbr_len);
+		pad(data->fd, '0', data->precision - nbr_len);
 	if (!(data->precision == 0 && data->arg.i == 0))
 		number_value(data);
 	if (data->flags.minus == 1 && nbr_len + extra_len < data->width)
-		padding += pad(' ', data->width - (nbr_len + extra_len));
+		padding += pad(data->fd, ' ', data->width - (nbr_len + extra_len));
 	return (extra_len + nbr_len + padding);
 }

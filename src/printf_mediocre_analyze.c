@@ -6,7 +6,7 @@
 /*   By: nschat <nschat@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/22 13:46:00 by nschat        #+#    #+#                 */
-/*   Updated: 2020/02/21 12:01:37 by nschat        ########   odam.nl         */
+/*   Updated: 2020/10/19 14:10:16 by nschat        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,11 @@ static size_t	to_next(const char *format)
 	return (len);
 }
 
-static void		make_string(const char **format, t_data *data)
+static void		make_string(int fd, const char **format, t_data *data)
 {
 	size_t	skip_len;
 
+	data->fd = fd;
 	data->flags = (t_flags){0, 0};
 	data->width = -1;
 	data->precision = -1;
@@ -35,9 +36,10 @@ static void		make_string(const char **format, t_data *data)
 	*format += skip_len;
 }
 
-static void		fill_data(const char **format, va_list ap, t_data *data)
+static void		fill_data(int fd, const char **format, va_list ap, t_data *data)
 {
 	(*format)++;
+	data->fd = fd;
 	data->flags = get_flags(format);
 	data->width = get_width(format, ap, data);
 	data->precision = get_precision(format, ap);
@@ -51,9 +53,9 @@ static void		fill_data(const char **format, va_list ap, t_data *data)
 	get_arg(format, ap, data);
 }
 
-t_list			*analyze_format(const char *format, va_list ap)
+t_pflist			*analyze_format(int fd, const char *format, va_list ap)
 {
-	t_list	*list;
+	t_pflist	*list;
 	t_data	*data;
 
 	list = NULL;
@@ -66,10 +68,10 @@ t_list			*analyze_format(const char *format, va_list ap)
 			return (NULL);
 		}
 		if (*format == '%')
-			fill_data(&format, ap, data);
+			fill_data(fd, &format, ap, data);
 		else
-			make_string(&format, data);
-		ft_lstadd_back(&list, ft_lstnew(data));
+			make_string(fd, &format, data);
+		ft_pflstadd_back(&list, ft_pflstnew(data));
 	}
 	return (list);
 }
